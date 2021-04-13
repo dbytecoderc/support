@@ -1,0 +1,35 @@
+module.exports = {
+	roots: ['src'],
+	globals: {
+		'ts-jest': {
+			tsconfig: 'tsconfig.json',
+		},
+	},
+	moduleFileExtensions: ['ts', 'js'],
+	transform: {
+		'^.+\\.ts?$': 'ts-jest',
+	},
+	testRegex: '.spec.ts$',
+	modulePathIgnorePatterns: ['__mocks__', 'node_modules'],
+	testEnvironment: 'node',
+	coverageDirectory: './coverage',
+	collectCoverage: true,
+	collectCoverageFrom: [
+		'**/*.{js,jsx,ts,tsx}',
+		'!**/@types/**',
+		'!**/interfaces/**',
+		'!**/migrations/**',
+		'!**/node_modules/**',
+		'!**/dist/**',
+		'!**/coverage/**',
+		'!**/typings/**',
+		'!src/index.ts',
+		'!src/app.ts',
+		'!src/database/index.ts',
+		'!src/modules/app/**',
+		'!src/config/**',
+	],
+	coverageReporters: ['lcov', 'text'],
+	testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+	testTimeout: 30000,
+};

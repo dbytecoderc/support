@@ -1,0 +1,19 @@
+{
+  "name": "support",
+  "version": "1.0.0",
+  "description": "The system allows customers to be able to place support requests, and support agents to process the request.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dbytecoderc/support.git"
+  },
+  "author": "DC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dbytecoderc/support/issues"
+  },
+  "homepage": "https://github.com/dbytecoderc/support#readme"
+}

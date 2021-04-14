@@ -26,6 +26,7 @@ module.exports = {
 		'!src/index.ts',
 		'!src/app.ts',
 		'!src/database/index.ts',
+		'!src/database/seeders',
 		'!src/modules/app/**',
 		'!src/config/**',
 	],

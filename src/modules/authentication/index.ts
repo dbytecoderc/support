@@ -6,15 +6,9 @@ import Middlewares from '../../middleware';
 
 const authRouter: Router = Router();
 
+const { createUser, loginUser } = AuthController;
 const {
-  createUser,
-  // loginUser
-} = AuthController;
-const {
-  UserSchema: {
-    signupSchema,
-    // loginSchema
-  },
+  UserSchema: { signupSchema, loginSchema },
 } = Schemas;
 const {
   Validator: { validateRequest },
@@ -26,6 +20,6 @@ authRouter.post(
   createUser,
 );
 
-// authRouter.post('/auth', validateRequest(loginSchema(), 'body'), loginUser);
+authRouter.post('/auth', validateRequest(loginSchema(), 'body'), loginUser);
 
 export default authRouter;

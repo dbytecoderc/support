@@ -11,10 +11,10 @@ export default class UserSchema {
     });
   }
 
-  // static loginSchema() {
-  //   return Joi.object({
-  //     email: BaseSchema.email().required(),
-  //     password: Joi.string().required(),
-  //   });
-  // }
+  static loginSchema() {
+    return Joi.object({
+      email: BaseSchema.email().required(),
+      password: Joi.string().required(),
+    });
+  }
 }

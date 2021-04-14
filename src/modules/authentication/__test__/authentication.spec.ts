@@ -7,15 +7,15 @@ import logger from '../../../config/logger';
 
 import {
   signUpMock,
-  // loginMock,
-  // invalidLoginMock,
+  loginMock,
+  invalidLoginMock,
   emptySignupNameField,
   invalidSignupEmailInput,
   invalidSignupPasswordInput,
   allSignupFieldsEmpty,
-  // invalidLoginEmailInput,
-  // invalidLoginPasswordInput,
-  // allLoginFieldsEmpty,
+  invalidLoginEmailInput,
+  invalidLoginPasswordInput,
+  allLoginFieldsEmpty,
 } from '../../user/__test__/__mocks__/mockUsers';
 
 import User from '../../../database/models/User';
@@ -112,65 +112,63 @@ describe('TEST SUITE FOR USER ONBOARDING AND AUTHENTICATION', () => {
     done();
   });
 
-  // it('should successfully sign in a user', async (done) => {
-  //   const response = await request.post(`${baseUrl}/auth`).send(loginMock);
+  it('should successfully sign in a user', async (done) => {
+    const response = await request.post(`${baseUrl}/auth`).send(loginMock);
 
-  //   expect(response.status).toEqual(200);
-  //   expect(response.body.success).toEqual(true);
-  //   expect(response.body.message).toEqual('You have successfully logged in');
-  //   expect(response.body.user.email).toEqual(loginMock.email);
-  //   done();
-  // });
+    expect(response.status).toEqual(200);
+    expect(response.body.success).toEqual(true);
+    done();
+  });
 
-  // it('should not sign in a non-existing user', async (done) => {
-  //   const response = await request.post(`${baseUrl}/auth`).send(invalidLoginMock);
+  it('should not sign in a non-existing user', async (done) => {
+    const response = await request.post(`${baseUrl}/auth`).send(invalidLoginMock);
 
-  //   expect(response.status).toEqual(404);
-  //   expect(response.body.success).toEqual(false);
-  //   expect(response.body.message).toEqual('The email or password is not correct');
-  //   done();
-  // });
+    expect(response.status).toEqual(400);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.error).toEqual('Invalid login details');
+    done();
+  });
 
-  // it('should validate login email field', async (done) => {
-  //   const response = await request
-  //     .post(`${baseUrl}/auth`)
-  //     .send(invalidLoginEmailInput);
+  it('should validate login email field', async (done) => {
+    const response = await request
+      .post(`${baseUrl}/auth`)
+      .send(invalidLoginEmailInput);
 
-  //   expect(response.status).toEqual(422);
-  //   expect(response.body.success).toEqual(false);
-  //   expect(response.body.message).toEqual('Validation Errors');
-  //   expect(response.body.errors).toEqual({
-  //     email: ['email is not allowed to be empty'],
-  //   });
-  //   done();
-  // });
+    expect(response.status).toEqual(422);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.message).toEqual('Validation Errors');
+    expect(response.body.errors).toEqual({
+      email: ['email is not allowed to be empty'],
+    });
+    done();
+  });
 
-  // it('should validate login password field', async (done) => {
-  //   const response = await request
-  //     .post(`${baseUrl}/auth`)
-  //     .send(invalidLoginPasswordInput);
+  it('should validate login password field', async (done) => {
+    const response = await request
+      .post(`${baseUrl}/auth`)
+      .send(invalidLoginPasswordInput);
 
-  //   expect(response.status).toEqual(422);
-  //   expect(response.body.success).toEqual(false);
-  //   expect(response.body.message).toEqual('Validation Errors');
-  //   expect(response.body.errors).toEqual({
-  //     password: ['password is not allowed to be empty'],
-  //   });
-  //   done();
-  // });
+    expect(response.status).toEqual(422);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.message).toEqual('Validation Errors');
+    expect(response.body.errors).toEqual({
+      password: ['password is not allowed to be empty'],
+    });
+    done();
+  });
 
-  // it('should validate signup all fields concurrently', async (done) => {
-  //   const response = await request.post(`${baseUrl}/auth`).send(allLoginFieldsEmpty);
+  it('should validate signup all fields concurrently', async (done) => {
+    const response = await request.post(`${baseUrl}/auth`).send(allLoginFieldsEmpty);
 
-  //   expect(response.status).toEqual(422);
-  //   expect(response.body.success).toEqual(false);
-  //   expect(response.body.message).toEqual('Validation Errors');
-  //   expect(response.body.errors).toEqual({
-  //     email: ['email is not allowed to be empty'],
-  //     password: ['password is not allowed to be empty'],
-  //   });
-  //   done();
-  // });
+    expect(response.status).toEqual(422);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.message).toEqual('Validation Errors');
+    expect(response.body.errors).toEqual({
+      email: ['email is not allowed to be empty'],
+      password: ['password is not allowed to be empty'],
+    });
+    done();
+  });
 });
 
 describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
@@ -209,10 +207,10 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
     done();
   });
 
-  // it("calls status and json methods to generate response when login in", async (done) => {
-  // 	await UnmockedAuthController.loginUser(req, res);
-  // 	expect(status).toHaveBeenCalledTimes(1);
-  // 	expect(json).toHaveBeenCalledTimes(1);
-  // 	done();
-  // });
+  it("calls status and json methods to generate response when login in", async (done) => {
+  	await UnmockedAuthController.loginUser(req, res);
+  	expect(status).toHaveBeenCalledTimes(1);
+  	expect(json).toHaveBeenCalledTimes(1);
+  	done();
+  });
 });

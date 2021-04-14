@@ -1,6 +1,8 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-import { User } from "../../interfaces/user";
+import { User } from '../../@types/express';
+
+const { Schema } = mongoose;
 
 // Create Schema
 const UserSchema = new Schema({
@@ -27,4 +29,4 @@ const UserSchema = new Schema({
   },
 });
 
-export default model<User>("User", UserSchema);
+export default mongoose.model<User>("User", UserSchema);

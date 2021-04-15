@@ -15,31 +15,34 @@ export default class SupportRequestRepository {
    * @returns {Object} returned datase object
    */
   static async getSupportRequest(id: string) {
-    return await SupportRequest.findOne({ _id: id }).populate('owner comments');
+    // return await SupportRequest.findOne({ _id: id }).populate('owner comments');
+    return await SupportRequest.findOne({ _id: id }).populate('owner');
   }
 
   /**
    * @returns {Object} fetched resource
    */
   static async getSupportRequests() {
-    return await SupportRequest.find().populate('owner comments');
+    // return await SupportRequest.find().populate('owner comments');
+    return await SupportRequest.find().populate('owner');
   }
 
-  /**
-   * @returns {Object} fetched resource
-   */
-  static async getClosedSupportRequests() {
-    return await SupportRequest.find({ status: 'CLOSED' }).populate(
-      'owner comments',
-    );
-  }
+  // /**
+  //  * @returns {Object} fetched resource
+  //  */
+  // static async getClosedSupportRequests() {
+  //   return await SupportRequest.find({ status: 'CLOSED' }).populate(
+  //     'owner comments',
+  //   );
+  // }
 
   /**
    * @param {Object} id - ID of data to be fetched
    * @returns {Object} fetched resource
    */
   static async getUserSupportRequests(id: string) {
-    return await SupportRequest.find({ owner: id }).populate('owner comments');
+    // return await SupportRequest.find({ owner: id }).populate('owner comments');
+    return await SupportRequest.find({ owner: id }).populate('owner');
   }
 
   /**

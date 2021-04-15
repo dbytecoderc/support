@@ -1,5 +1,5 @@
-import AuthMiddleware from './Authentication';
-import Validator from './Validator';
+import AuthMiddleware from './authentication.middleware';
+import Validator from './validator.middleware';
 
 export default {
   AuthMiddleware,

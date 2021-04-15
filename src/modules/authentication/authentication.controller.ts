@@ -5,13 +5,6 @@ import Utils from '../../utils/utils';
 import Error from '../../utils/Error';
 import UserRepository from '../user/user.repository';
 import { User } from '../../@types/express';
-// import { UserType } from '../user/interfaces/User';
-
-const {
-  hashPassword,
-  // comparePassword,
-  // generateToken
-} = Utils;
 
 export default class AuthController {
   /**
@@ -45,7 +38,7 @@ export default class AuthController {
         return Error.handleError('Email already in use', 403, response);
       }
 
-      const hashedPassword = await hashPassword(password);
+      const hashedPassword = await Utils.hashPassword(password);
 
       const user = await UserRepository.createUser({
         ...request.body,
@@ -76,20 +69,23 @@ export default class AuthController {
    * @returns {Boolean} success
    *
    */
-  static async loginUser(request: Request, response: Response): Promise<any> {
+  static async loginUser(
+    request: Request,
+    response: Response,
+  ): Promise<void | Response<any, Record<string, any>>> {
     try {
       const { email, password } = request.body;
       const user: User | null = await UserRepository.findByEmail(email);
 
       if (!user || !Utils.passwordsMatch(password, user.password)) {
-        return Error.handleError("Invalid login details", 400, response);
+        return Error.handleError('Invalid login details', 400, response);
       }
 
       const token: string = Utils.generateAuthToken({
         sub: user.email,
         admin: user.admin,
       });
-      
+
       return response.status(200).json({ success: true, token });
     } catch (error) {
       return Error.handleError('Server error', 500, response, error);

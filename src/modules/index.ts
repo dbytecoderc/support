@@ -2,10 +2,10 @@ import { Router, Application } from 'express';
 
 import appRouter from './app';
 import authRouter from './authentication';
-import supportRequestRouter from './supportRequest';
-import commentRouter from './comment';
+import supportRequestRouter from './support-request';
+// import commentRouter from './comment';
 
-const routes: Router[] = [authRouter, supportRequestRouter, commentRouter];
+const routes: Router[] = [authRouter, supportRequestRouter];
 
 const apiPrefix: string = `/api/v1`;
 

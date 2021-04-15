@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import UserRepository from '../modules/user/user.repository';
 import Utils from '../utils/utils';
 import Error from "../utils/Error";
-import logger from "../config/logger";
+// import logger from "../config/logger";
 
 class AuthMiddleware {
   /**
@@ -22,22 +22,23 @@ class AuthMiddleware {
 				const bearer = header.split(" ");
 				const token = bearer[1];
 				const decoded: any = Utils.decodeToken(token);
-				if (decoded) {
 
-					const user = await UserRepository.findByEmail(decoded.sub);
+        if(!decoded.sub){
+          return Error.handleError("Not allowed", 400, response);
+        }
 
-					if (user && user._id) {
-						request.user = user;
-						return next();
-					} else {
-						return Error.handleError("User does not exist", 400, response);
-					}
-				}
+        const user = await UserRepository.findByEmail(decoded.sub);
+        if (user && user._id) {
+          request.user = user;
+          return next();
+        } else {
+          return Error.handleError("User does not exist", 400, response);
+        }
+
 			} else {
 				return Error.handleError("Missing authorization header", 400, response);
 			}
 		} catch (error) {
-			logger.error(error.toString());
 			return Error.handleError("Server error", 500, response);
 		}
 	}
@@ -56,13 +57,11 @@ class AuthMiddleware {
     const { admin } = request.user;
 
     if (!admin) {
-      return response.status(401).json({
-        success: false,
-        message: 'Admin access needed',
-      });
+      return Error.handleError("Unathorized access", 400, response);
     }
+    
     return next();
   }
 }
 
-export default AuthMiddleware as any;
+export default AuthMiddleware;

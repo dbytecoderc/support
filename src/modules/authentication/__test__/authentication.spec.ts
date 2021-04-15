@@ -194,7 +194,7 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
     jest.spyOn(logger, 'info').mockImplementation(() => true as any);
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     jest.clearAllMocks();
     jest.resetModules();
     server.close();

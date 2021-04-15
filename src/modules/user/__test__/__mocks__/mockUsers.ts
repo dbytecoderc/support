@@ -2,47 +2,41 @@
 
 // dotenv.config();
 
-// const { ADMIN_PASSWORD, NON_ADMIN_PASSWORD } = process.env;
+// const { ADMIN_password, NON_ADMIN_password } = process.env;
 
 
-export const mockUser = {
-  name: 'Johnny',
-  email: 'johnny@gmail.com',
-  password: 'password',
-};
-
-export const mockUser2 = {
-  name: 'Johnny2',
-  email: 'johnny2@gmail.com',
-  password: 'password',
-};
-
-export const signUpMock = {
+export const testUser = {
   name: 'Johnny Signup',
   email: 'johnnysignup@gmail.com',
-  password: 'password',
+  password: 'Password1',
+};
+
+export const testUser2 = {
+  name: 'Johnny2',
+  email: 'johnny2@gmail.com',
+  password: 'Password1',
 };
 
 export const loginMock = {
   email: 'johnnysignup@gmail.com',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const invalidLoginMock = {
   email: 'johnnyisinvalid@gmail.com',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const emptySignupNameField = {
   name: '',
   email: 'johnnysignup@gmail.com',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const invalidSignupEmailInput = {
   name: 'johnnyisinvalid@gmail.com',
   email: '',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const invalidSignupPasswordInput = {
@@ -59,7 +53,7 @@ export const allSignupFieldsEmpty = {
 
 export const invalidLoginEmailInput = {
   email: '',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const invalidLoginPasswordInput = {
@@ -75,7 +69,7 @@ export const allLoginFieldsEmpty = {
 export const testAdminUser = {
   name: 'Test admin user',
   email: 'testadmin@admin.com',
-  password: 'password',
+  password: 'Password1',
 };
 
 export const secondTestAdminUser = {

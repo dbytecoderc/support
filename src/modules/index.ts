@@ -3,9 +3,9 @@ import { Router, Application } from 'express';
 import appRouter from './app';
 import authRouter from './authentication';
 import supportRequestRouter from './support-request';
-// import commentRouter from './comment';
+import commentRouter from './comment';
 
-const routes: Router[] = [authRouter, supportRequestRouter];
+const routes: Router[] = [authRouter, supportRequestRouter, commentRouter];
 
 const apiPrefix: string = `/api/v1`;
 

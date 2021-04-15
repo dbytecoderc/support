@@ -4,8 +4,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import User from '../User';
 
 import {
-  mockUser,
-  mockUser2,
+  testUser,
+  testUser2,
 } from '../../../modules/user/__test__/__mocks__/mockUsers';
 
 let mongoServer: any;
@@ -39,19 +39,19 @@ describe('TEST SUITE FOR USER MODEL', () => {
   });
 
   it('Should save a user', async () => {
-    const newUser = new User(mockUser);
+    const newUser = new User(testUser);
     const createdUser = await newUser.save();
     const userCount = await User.countDocuments();
 
     expect(userCount).toEqual(1);
-    expect(createdUser.name).toEqual('Johnny');
-    expect(createdUser.email).toEqual('johnny@gmail.com');
-    expect(createdUser.password).toEqual('password');
+    expect(createdUser.name).toEqual('Johnny Signup');
+    expect(createdUser.email).toEqual('johnnysignup@gmail.com');
+    expect(createdUser.password).toEqual('Password1');
     expect(createdUser.admin).toEqual(false);
   });
 
   it('Should retrieve users from the database', async () => {
-    const SecondUser = new User(mockUser2);
+    const SecondUser = new User(testUser2);
     await SecondUser.save();
     const users = await User.find();
     const userCount = await User.countDocuments();
@@ -68,8 +68,8 @@ describe('TEST SUITE FOR USER MODEL', () => {
     await User.updateOne({ _id: userId }, { $set: { name: 'NewJohnny' } });
     const getUpdatedUser: any = await User.findById(userId);
     expect(getUpdatedUser.name).toEqual('NewJohnny');
-    expect(getUpdatedUser.email).toEqual('johnny@gmail.com');
-    expect(getUpdatedUser.password).toEqual('password');
+    expect(getUpdatedUser.email).toEqual('johnnysignup@gmail.com');
+    expect(getUpdatedUser.password).toEqual('Password1');
   });
 
   it('Should delete a user from the database', async () => {

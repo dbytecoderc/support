@@ -6,7 +6,7 @@ import baseUrl from '../../../utils/constants';
 import logger from '../../../config/logger';
 
 import {
-  signUpMock,
+  testUser,
   loginMock,
   invalidLoginMock,
   emptySignupNameField,
@@ -36,7 +36,7 @@ describe('TEST SUITE FOR USER ONBOARDING AND AUTHENTICATION', () => {
   });
 
   it('should successfully sign up a user', async (done) => {
-    const response = await request.post(`${baseUrl}/register`).send(signUpMock);
+    const response = await request.post(`${baseUrl}/register`).send(testUser);
 
     expect(response.status).toEqual(201);
     expect(response.body.success).toEqual(true);
@@ -47,7 +47,7 @@ describe('TEST SUITE FOR USER ONBOARDING AND AUTHENTICATION', () => {
   });
 
   it('should not signup a user with the same email', async (done) => {
-    const response = await request.post(`${baseUrl}/register`).send(signUpMock);
+    const response = await request.post(`${baseUrl}/register`).send(testUser);
 		expect(response.status).toEqual(403);
 		expect(response.body.error).toBe("Email already in use");
 		expect(response.body.success).toBe(false);

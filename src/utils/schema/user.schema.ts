@@ -7,7 +7,7 @@ export default class UserSchema {
     return Joi.object({
       name: Joi.string().required(),
       email: BaseSchema.email().required(),
-      password: Joi.string().min(5).required(),
+      password: Joi.string().min(5).regex(/\d/).required(),
     });
   }
 

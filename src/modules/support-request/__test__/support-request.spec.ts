@@ -6,12 +6,9 @@ import baseUrl from '../../../utils/constants';
 
 import {
   testUser,
-  secondTestUser,
+  testUser2,
   testAdminUser,
-  testUserLogin,
-  secondTestUserLogin,
-  testAdminUserLogin,
-} from './__mocks__/users';
+} from '../../user/__test__/__mocks__/mockUsers';
 
 import {
   validSupportRequest,
@@ -33,20 +30,15 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     await User.deleteMany({});
     await SupportRequest.deleteMany({});
 
-    await request.post(`${baseUrl}/register`).send(testUser);
-    const firstUserLogin = await request
-      .post(`${baseUrl}/auth`)
-      .send(testUserLogin);
+    const firstUser = await request.post(`${baseUrl}/register`).send(testUser);
 
-    token = firstUserLogin.body.token;
+    token = firstUser.body.token;
 
-    await request.post(`${baseUrl}/register`).send(secondTestUser);
+    const secondUser = await request
+      .post(`${baseUrl}/register`)
+      .send(testUser2);
 
-    const secondUserLogin = await request
-      .post(`${baseUrl}/auth`)
-      .send(secondTestUserLogin);
-
-    secondToken = secondUserLogin.body.token;
+    secondToken = secondUser.body.token;
 
     await request.post(`${baseUrl}/register`).send(testAdminUser);
 
@@ -55,9 +47,10 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
       { admin: true },
     );
 
-    const adminUserLogin = await request
-      .post(`${baseUrl}/auth`)
-      .send(testAdminUserLogin);
+    const adminUserLogin = await request.post(`${baseUrl}/auth`).send({
+      email: testAdminUser.email,
+      password: testAdminUser.password,
+    });
 
     adminToken = adminUserLogin.body.token;
 
@@ -81,8 +74,12 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
 
     expect(response.status).toEqual(201);
     expect(response.body.success).toEqual(true);
-    expect(response.body.message).toEqual('Support request created successfully');
-    expect(response.body.data.description).toEqual(validSupportRequest.description);
+    expect(response.body.message).toEqual(
+      'Support request created successfully',
+    );
+    expect(response.body.data.description).toEqual(
+      validSupportRequest.description,
+    );
     done();
   });
 
@@ -145,8 +142,7 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     done();
   });
 
-  it('A user not should be able to fetch a non-existent support request', async (done) => {
-
+  it('A user should not be able to fetch a non-existent support request', async (done) => {
     const response = await request
       .get(`${baseUrl}/support_request/607767fe1341087782da1be1`)
       .set('Content-Type', 'application/json')
@@ -296,7 +292,6 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
   });
 
   it('A user not should be able to update a non-existent support request', async (done) => {
-
     const response = await request
       .patch(`${baseUrl}/support_request/607767fe1341087782da1be1`)
       .set('Content-Type', 'application/json')
@@ -311,7 +306,6 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     done();
   });
 
-  
   it('A user not should be able to update a support request they did not create', async (done) => {
     const supportRequest = await SupportRequest.findOne({
       description: 'test update status',
@@ -413,9 +407,10 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
   });
 
   it('A user not should be able to update a non-existent support request status', async (done) => {
-
     const response = await request
-      .patch(`${baseUrl}/support_request/close_request/607767fe1341087782da1be1`)
+      .patch(
+        `${baseUrl}/support_request/close_request/607767fe1341087782da1be1`,
+      )
       .set('Content-Type', 'application/json')
       .set('authorization', `Bearer ${adminToken}`)
       .send({
@@ -427,7 +422,6 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     expect(response.body.error).toEqual('Support request not found');
     done();
   });
-
 
   it('A non-admin user should not be able to update a support request status', async (done) => {
     const supportRequest = await SupportRequest.findOne({
@@ -450,22 +444,27 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
 });
 
 describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
-  let UnmockedSupportRequestController: any, json: any, status: any, res: any, req: any;
+  let UnmockedSupportRequestController: any,
+    json: any,
+    status: any,
+    res: any,
+    req: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.resetModules();
     jest.unmock('../support-request.controller');
     // fetch module after unmocking
-    UnmockedSupportRequestController = require('../support-request.controller').default;
+    UnmockedSupportRequestController = require('../support-request.controller')
+      .default;
     // spies
     json = jest.fn();
     status = jest.fn(() => ({ json }));
     res = { status };
     req = {
       params: {
-        id: ''
-      }
+        id: '',
+      },
     };
     jest.spyOn(logger, 'error').mockImplementation(() => true as any);
     jest.spyOn(logger, 'info').mockImplementation(() => true as any);
@@ -496,7 +495,6 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
     done();
   });
 
-  
   it('calls status and json methods to generate response when updating a support request', async (done) => {
     req = {
       body: {
@@ -523,7 +521,9 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
 
   it('calls status and json methods to generate response when closing a support request', async (done) => {
     req = {
-      _id: ''
+      params: {
+        id: '',
+      },
     };
     await UnmockedSupportRequestController.getSupportRequests(req, res);
     expect(status).toHaveBeenCalledTimes(1);
@@ -531,4 +531,3 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
     done();
   });
 });
-

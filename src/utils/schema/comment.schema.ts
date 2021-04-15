@@ -1,7 +1,5 @@
 import Joi from '@hapi/joi';
 
-// import BaseSchema from './baseSchema';
-
 export default class CommentSchema {
   static postComment() {
     return Joi.object({

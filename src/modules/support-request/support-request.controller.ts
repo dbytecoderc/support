@@ -100,7 +100,10 @@ export default class SupportRequestController {
    * @returns {Boolean} success
    * @returns {string} message
    */
-  static async closeRequest(request: Request, response: Response): Promise<any> {
+  static async closeRequest(
+    request: Request,
+    response: Response,
+  ): Promise<void | Response<any, Record<string, any>>> {
     try {
       const supportRequest = await SupportRequestRepository.getSupportRequest(
         request.params.id,

@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 
 import CommentRepository from './comment.repository';
 import SupportRequestRepository from '../support-request/support-request.repository';
-// import Utils from '../../utils/utils';
 import Error from '../../utils/Error';
 
 export default class SupportRequestController {
@@ -33,11 +32,11 @@ export default class SupportRequestController {
         return Error.handleError('Support request not found', 400, response);
       }
 
-      if (!admin && supportRequest.owner._id.toString() !== _id.toString()) {
+      if (!admin && supportRequest.owner!._id.toString() !== _id.toString()) {
         return Error.handleError('Not allowed', 400, response);
       }
 
-      if (supportRequest.comments.length === 0 && !request.user.admin) {
+      if (supportRequest.comments!.length === 0 && !request.user.admin) {
         return Error.handleError(
           'No support agent has responded to this request',
           400,
@@ -45,7 +44,7 @@ export default class SupportRequestController {
         );
       }
 
-      if (supportRequest.comments.length === 0 && request.user.admin) {
+      if (supportRequest.comments!.length === 0 && request.user.admin) {
         await SupportRequestRepository.updateSupportRequest(
           supportRequest._id,
           { status: 'INPROGRESS' },

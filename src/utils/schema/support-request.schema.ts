@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 
-import BaseSchema from './base.schema';
+// import BaseSchema from './base.schema';
 
 export default class SupportRequestSchema {
   static createSupportRequestSchema() {
@@ -9,11 +9,11 @@ export default class SupportRequestSchema {
     });
   }
 
-  static supportRequestStatusSchema() {
-    return Joi.object({
-      status: BaseSchema.stringSchema().uppercase().valid('CLOSED').required(),
-    });
-  }
+  // static supportRequestStatusSchema() {
+  //   return Joi.object({
+  //     status: BaseSchema.stringSchema().uppercase().valid('CLOSED').required(),
+  //   });
+  // }
 
   static singleSupportRequestSchema() {
     return Joi.object({

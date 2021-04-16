@@ -8,6 +8,18 @@ interface CreateUserInput {
 	password: string;
 }
 
+
+interface SupportRequest extends Document {
+	description: string;
+	owner?: User;
+	comments?: Comment[]
+}
+
+interface Comment extends Document {
+	description: string;
+	owner?: User | string
+}
+
 interface User extends Document {
 	name: string;
 	email: string;

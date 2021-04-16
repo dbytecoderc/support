@@ -12,7 +12,7 @@ const {
   getSupportRequests,
   updateSupportRequest,
   closeRequest,
-  // downloadReport,
+  downloadReport,
 } = SupportRequestController;
 
 const {
@@ -27,7 +27,6 @@ const {
   SupportRequestSchema: {
     createSupportRequestSchema,
     singleSupportRequestSchema,
-    supportRequestStatusSchema,
   },
 } = Schemas;
 
@@ -58,17 +57,17 @@ supportRequestRouter.patch(
 supportRequestRouter.patch(
   '/support_request/close_request/:id',
   validateRequest(singleSupportRequestSchema(), 'params'),
-  validateRequest(supportRequestStatusSchema(), 'body'),
   validateToken,
   adminAuth,
   closeRequest,
 );
 
-// supportRequestRouter.get(
-//   '/download_report',
-//   validateToken,
-//   adminAuth,
-//   downloadReport,
-// );
+
+supportRequestRouter.get(
+  '/download_report',
+  validateToken,
+  adminAuth,
+  downloadReport,
+);
 
 export default supportRequestRouter;

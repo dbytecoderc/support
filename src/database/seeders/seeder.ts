@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 import User from '../models/User';
 import SupportRequest from '../models/SupportRequest';
+import Comment from '../models/Comment'
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const { HASHED_ADMIN_PASSWORD, HASHED_NON_ADMIN_PASSWORD } = process.env;
 const seedData = async () => {
   await User.deleteMany({});
   await SupportRequest.deleteMany({});
+  await Comment.deleteMany({});
   const user1 = new User({
     _id: '5e1863eeb0eb0406250967ba',
     name: 'Admin user',
@@ -24,18 +26,16 @@ const seedData = async () => {
     password: HASHED_NON_ADMIN_PASSWORD,
   });
 
-  // t
-
   await user1.save();
   await user2.save();
   await User.findOneAndUpdate({ email: 'admin@admin.com' }, { admin: true });
   const user = await User.findOne({ email: 'nonadmin@nonadmin.com' });
 
-  const createdAt1 = new Date(2020, 4, 30);
-  const endedAt1 = new Date(2020, 5, 27);
-  const endedAt2 = new Date(2020, 5, 25);
-  const endedAt3 = new Date(2020, 5, 22);
-  const endedAt4 = new Date(2020, 5, 10);
+  const createdAt1 = new Date(2021, 4, 16);
+  const endedAt1 = new Date(2021, 4, 17);
+  const endedAt2 = new Date(2021, 5, 25);
+  const endedAt3 = new Date(2021, 5, 22);
+  const endedAt4 = new Date(2021, 5, 10);
 
   const supportRequest1 = new SupportRequest({
     _id: '5f14396f8cd92082e4bcb2f8',

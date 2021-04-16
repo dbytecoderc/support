@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 
 import SupportRequestRepository from './support-request.repository';
-// import Utils from '../../utils/utils';
 import Error from '../../utils/Error';
+import Utils from '../../utils/utils';
+// import { User } from '../../@types/express';
 
 export default class SupportRequestController {
   /**
@@ -14,8 +15,7 @@ export default class SupportRequestController {
    * @param req.body {Object} The JSON payload.
    *
    * @function
-   * @returns {Boolean} success
-   * @returns {string} message
+   * @returns {Promise<void | Response<any, Record<string, any>>>} message
    */
   static async createSupportRequest(
     request: Request,
@@ -49,8 +49,7 @@ export default class SupportRequestController {
    * @param req.user {Object} The JSON payload containing user details
    *
    * @function
-   * @returns {Boolean} success
-   * @returns {string} message
+   * @returns {Promise<void | Response<any, Record<string, any>>>} message
    */
   static async updateSupportRequest(
     request: Request,
@@ -67,7 +66,7 @@ export default class SupportRequestController {
         return Error.handleError('Support request not found', 400, response);
       }
 
-      if (supportRequest.owner._id.toString() !== _id.toString()) {
+      if (supportRequest.owner!._id.toString() !== _id.toString()) {
         return Error.handleError('Not allowed', 400, response);
       }
 
@@ -97,8 +96,7 @@ export default class SupportRequestController {
    * Only an admin has access to this route
    *
    * @function
-   * @returns {Boolean} success
-   * @returns {string} message
+   * @returns {Promise<void | Response<any, Record<string, any>>>} message
    */
   static async closeRequest(
     request: Request,
@@ -113,15 +111,14 @@ export default class SupportRequestController {
         return Error.handleError('Support request not found', 400, response);
       }
 
-      const updatedRequest = await SupportRequestRepository.updateSupportRequest(
-        request.params.id,
-        { ...request.body, completedAt: new Date() },
-      );
+      await SupportRequestRepository.updateSupportRequest(request.params.id, {
+        status: 'CLOSED',
+        completedAt: new Date(),
+      });
 
       return response.status(200).json({
         success: true,
         message: 'You have successfully closed this support request',
-        data: updatedRequest,
       });
     } catch (error) {
       return Error.handleError('Server error', 500, response, error);
@@ -143,12 +140,17 @@ export default class SupportRequestController {
     response: Response,
   ): Promise<void | Response<any, Record<string, any>>> {
     try {
+      const { _id } = request.user;
       const supportRequest = await SupportRequestRepository.getSupportRequest(
         request.params.id,
       );
 
       if (!supportRequest) {
         return Error.handleError('Support request not found', 400, response);
+      }
+
+      if (supportRequest.owner!._id.toString() !== _id.toString()) {
+        return Error.handleError('Not allowed', 400, response);
       }
 
       response.status(200).json({
@@ -195,47 +197,48 @@ export default class SupportRequestController {
     }
   }
 
-  // /**
-  //  * Returns success if registration was successful and error if not
-  //  * @name /download_report GET
-  //  *
-  //  * @param request {Object} The request.
-  //  * @param response {Object} The response.
-  //  *
-  //  * @function
-  //  * @returns {Boolean} success
-  //  * @returns {string} message
-  //  */
-  // static async downloadReport(request: Request, response: Response) {
-  //   try {
-  //     const supportRequest = await SupportRequestRepository.getClosedSupportRequests();
+  /**
+   * Returns success if registration was successful and error if not
+   * @name /download_report GET
+   *
+   * @param request {Object} The request.
+   * @param response {Object} The response.
+   *
+   * @function
+   * @returns {Boolean} success
+   * @returns {Promise<void | Response<any, Record<string, any>>>} message
+   */
+  static async downloadReport(
+    request: Request,
+    response: Response,
+  ): Promise<void | Response<any, Record<string, any>>> {
+    try {
+      const currentDatetime = new Date();
+      const lastMonth = currentDatetime.setMonth(
+        currentDatetime.getMonth() - 1,
+      );
 
-  //     const currentDatetime = new Date();
-  //     const lastMonth = currentDatetime.setMonth(
-  //       currentDatetime.getMonth() - 1,
-  //     );
+      const supportRequestData = await SupportRequestRepository.getClosedSupportRequests(
+        lastMonth,
+      );
 
-  //     const lastMonthData = supportRequest.filter(
-  //       (data) => data && lastMonth < data.completedAt,
-  //     );
+      const csvFields = [
+        '_id',
+        'comments',
+        'status',
+        'description',
+        'owner',
+        'createdAt',
+      ];
 
-  //     const csvFields = [
-  //       '_id',
-  //       'comments',
-  //       'status',
-  //       'description',
-  //       'owner',
-  //       'createdAt',
-  //     ];
-  //     return downloadResource(
-  //       response,
-  //       'supportReport.csv',
-  //       csvFields,
-  //       lastMonthData,
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-  //     return errorHandler(error, 500, response);
-  //   }
-  // }
+      return Utils.downloadResource(
+        response,
+        'supportReport.csv',
+        csvFields,
+        supportRequestData,
+      );
+    } catch (error) {
+      return Error.handleError('Server error', 500, response, error);
+    }
+  }
 }

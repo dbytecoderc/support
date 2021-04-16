@@ -61,6 +61,7 @@ describe('TEST SUITE FOR COMMENTS', () => {
   afterAll(async (done) => {
     await User.deleteMany({});
     await SupportRequest.deleteMany({});
+    await Comment.deleteMany({});
     await mongoose.connection.close();
     server.close();
     done();

@@ -1,7 +1,7 @@
-// import { Response } from 'express';
+import { Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jsonwebtoken from 'jsonwebtoken';
-// import { Parser } from 'json2csv';
+import { Parser } from 'json2csv';
 // import dotenv from 'dotenv';
 
 // import { Token } from './interfaces/utils';
@@ -61,7 +61,6 @@ export default class Utils {
 
   public static parseValidationErrors(errorDetails: any) {
     const validationErrors: any = {};
-    // console.log(errorDetails)
 
     errorDetails.forEach((errorItem: any) => {
       const index = errorItem.message.indexOf(' ');
@@ -83,26 +82,27 @@ export default class Utils {
     return validationErrors;
   }
 
-  // /**
-  //  *
-  //  *
-  //  * @export
-  //  * @param {Response} response
-  //  * @param {string} fileName
-  //  * @param {string[]} fields
-  //  * @param {any} data
-  //  * @returns {Promise<void | Response<any, Record<string, any>>> }
-  //  */
-  // static downloadResource(
-  //   response: Response,
-  //   fileName: string,
-  //   fields: string[],
-  //   data: any,
-  // ): Response<any, Record<string, any>> {
-  //   const json2csv = new Parser({ fields });
-  //   const csv = json2csv.parse(data);
-  //   response.header('Content-Type', 'text/csv');
-  //   response.attachment(fileName);
-  //   return response.send(csv);
-  // }
+  /**
+   *
+   *
+   * @export
+   * @param {Response} response
+   * @param {string} fileName
+   * @param {string[]} fields
+   * @param {any} data
+   * @returns {Response<any, Record<string, any>>}
+   */
+  public static downloadResource(
+    response: Response,
+    fileName: string,
+    fields: string[],
+    data: any,
+  ): Response<any, Record<string, any>> {
+    const json2csv = new Parser({ fields });
+    const csv = json2csv.parse(data);
+    response.header('Content-Type', 'text/csv');
+    response.header("Content-Disposition", `attachment;filename=${fileName}.csv`);
+    response.attachment(fileName);
+    return response.send(csv);
+  }
 }

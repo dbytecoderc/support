@@ -1,90 +1,34 @@
-// import jsonwebtoken from 'jsonwebtoken';
-// import bcrypt from 'bcrypt';
-
-// import Utils from '../utils';
-
-// describe('UNIT TEST FOR UTILITY FUNCTION', () => {
-//   let json: any, status: any, statusCode: any, response: any, error: any; // eslint-disable-line
-
-//   beforeEach(() => {
-//     json = jest.fn();
-//     status = jest.fn(() => ({ json }));
-//     response = { status };
-//     statusCode = 404;
-//     error = 'Error';
-//   });
-
-  // it('Returns correct error message', () => {
-  //   expect.assertions(2);
-  //   Utils.errorHandler(error, statusCode, response);
-  //   expect(json).toHaveBeenCalledTimes(1);
-  //   expect(json).toHaveBeenCalledWith({ success: false, error });
-  // });
-
-//   // it('Returns the correct status code', () => {
-//   //   expect.assertions(2);
-//   //   Utils.errorHandler(error, statusCode, response);
-//   //   expect(status).toHaveBeenCalledTimes(1);
-//   //   expect(status).toHaveBeenCalledWith(404);
-//   // });
-
-//   it('Generates auth a token', async () => {
-//     const data = 'mockreturntokendata';
-//     const token = { sub: 'test', admin: true };
-
-//     jest
-//       .spyOn(jsonwebtoken, 'sign')
-//       .mockImplementation(() => Promise.resolve(data) as any);
-
-//     const mocks: string = await Utils.generateToken(token);
-
-//     expect(mocks).toEqual(data);
-//   });
-
-//   it('Decodes a token', async () => {
-//     const data = 'mockreturntokendata';
-
-//     jest
-//       .spyOn(jsonwebtoken, 'verify')
-//       .mockImplementation(() => Promise.resolve(data) as any);
-
-//     const mocks: any = await Utils.decodeToken('token');
-
-//     expect(mocks).toEqual(data);
-//   });
-
-//   it('Encrypts a string', async () => {
-//     const data = 'mockreturntokendata';
-
-//     jest
-//       .spyOn(bcrypt, 'hash')
-//       .mockImplementation(() => Promise.resolve(data) as any);
-
-//     const mocks: any = await Utils.hashPassword('password');
-
-//     expect(mocks).toEqual(data);
-//   });
-
-//   it('Compares two strings', async () => {
-//     jest
-//       .spyOn(bcrypt, 'compareSync')
-//       .mockImplementation(() => Promise.resolve(true) as any);
-
-//     const mocks: any = await Utils.comparePassword(
-//       'encryptedPassword',
-//       'normalPasswordString',
-//     );
-
-//     expect(mocks).toEqual(true);
-//   });
-// });
 import jsonwebtoken from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { Parser } from 'json2csv';
 
 import Utils from "../utils";
 import { validationErrorDetails } from "./__mocks__/utils.mocks";
 
+jest.mock("json2csv");
+
 describe("AUTH UTILS TEST SUITE", () => {
+	let send: any, res: any, header: any, attachment: any;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.resetModules();
+    send = jest.fn();
+		header = jest.fn();
+		attachment = jest.fn();
+    res = { send, header, attachment };
+  });
+
+	afterEach(async () => {
+    jest.clearAllMocks();
+    jest.resetModules();
+  });
+
+  afterAll(async () => {
+    jest.clearAllMocks();
+    jest.resetModules();
+  });
+
 	it("Should generate an auth token", (done) => {
 		expect(true).toBe(true);
 		const data = "mockreturntokendata";
@@ -124,6 +68,22 @@ describe("AUTH UTILS TEST SUITE", () => {
 			["email must be a valid email", "email must not be empty"].toString()
 		);
 		expect(parseValidation).toHaveProperty('email');
+		done();
+	});
+
+	it("Should parse and send file", (done) => {
+		const data = 'data'
+		jest.spyOn(new Parser, "parse").mockImplementation(() => data as any);
+		const csvFields = [
+			'_id',
+			'comments',
+			'status',
+			'description',
+			'owner',
+			'createdAt',
+		];
+		Utils.downloadResource(res, 'supportReport.csv', csvFields, 'data');
+		expect(send).toHaveBeenCalledTimes(1);
 		done();
 	});
 });

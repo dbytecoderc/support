@@ -1,57 +1,70 @@
-import SupportRequest from '../../database/models/SupportRequest';
+import SupportRequestModel from '../../database/models/SupportRequest';
+import { SupportRequest } from '../../@types/express';
 
 export default class SupportRequestRepository {
   /**
-   * @param {Object} requestDetails - Support request details to be saved
-   * @returns {Object} saved datase object
+   * @param {SupportRequest} requestDetails - Support request details to be saved
+   * @returns {Promise<SupportRequest>} saved datase object
    */
-  static async createSupportRequest(requestDetails: any) {
-    const supportRequest = new SupportRequest(requestDetails);
+  static async createSupportRequest(
+    requestDetails: SupportRequest,
+  ): Promise<SupportRequest> {
+    const supportRequest = new SupportRequestModel(requestDetails);
     return await supportRequest.save();
   }
 
   /**
-   * @param {Object} id - ID of data to be fetched
-   * @returns {Object} returned datase object
+   * @param {string} id - ID of data to be fetched
+   * @returns {Promise<SupportRequest>} returned datase object
    */
-  static async getSupportRequest(id: string) {
-    // return await SupportRequest.findOne({ _id: id }).populate('owner comments');
-    return await SupportRequest.findOne({ _id: id }).populate('owner');
+  static async getSupportRequest(id: string): Promise<SupportRequest> {
+    return await SupportRequestModel.findOne({
+      _id: id,
+      status: { $ne: 'CLOSED' },
+    }).populate('owner comments', '-password');
   }
 
   /**
-   * @returns {Object} fetched resource
+   * @returns {Promise<SupportRequest[]>} fetched resource
    */
-  static async getSupportRequests() {
-    // return await SupportRequest.find().populate('owner comments');
-    return await SupportRequest.find().populate('owner');
-  }
-
-  // /**
-  //  * @returns {Object} fetched resource
-  //  */
-  // static async getClosedSupportRequests() {
-  //   return await SupportRequest.find({ status: 'CLOSED' }).populate(
-  //     'owner comments',
-  //   );
-  // }
-
-  /**
-   * @param {Object} id - ID of data to be fetched
-   * @returns {Object} fetched resource
-   */
-  static async getUserSupportRequests(id: string) {
-    // return await SupportRequest.find({ owner: id }).populate('owner comments');
-    return await SupportRequest.find({ owner: id }).populate('owner');
+  static async getSupportRequests(): Promise<SupportRequest[]> {
+    return await SupportRequestModel.find().populate(
+      'owner comments',
+      '-password',
+    );
   }
 
   /**
-   * @param {Object} id - ID of data to be fetched
+   * @param {number} time from last month
+   * @returns {Promise<SupportRequest[]>} fetched resource
+   */
+  static async getClosedSupportRequests(
+    lastMonth: number,
+  ): Promise<SupportRequest[]> {
+    return await SupportRequestModel.find({
+      status: 'CLOSED',
+      completedAt: { $gt: lastMonth },
+    }).populate('owner comments', '-password');
+  }
+
+  /**
+   * @param {string} id - ID of data to be fetched
+   * @returns {Promise<SupportRequest[]>} fetched resource
+   */
+  static async getUserSupportRequests(id: string): Promise<SupportRequest[]> {
+    return await SupportRequestModel.find({
+      owner: id,
+      status: { $ne: 'CLOSED' },
+    }).populate('owner comments', '-password');
+  }
+
+  /**
+   * @param {string} id - ID of data to be fetched
    * @param {Object} data data to facilitate update
-   * @returns {Object} Updated data
+   * @returns {Promise<SupportRequest>} Updated data
    */
-  static async updateSupportRequest(id: string, data: any) {
-    return await SupportRequest.findByIdAndUpdate(
+  static async updateSupportRequest(id: string, data: any): Promise<SupportRequest> {
+    return await SupportRequestModel.findByIdAndUpdate(
       { _id: id },
       { ...data },
       { new: true },

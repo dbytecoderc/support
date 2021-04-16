@@ -18,6 +18,7 @@ import {
 import User from '../../../database/models/User';
 import SupportRequest from '../../../database/models/SupportRequest';
 import logger from '../../../config/logger';
+// import SupportRequestRepository from '../support-request.repository';
 
 const request = supertest(server);
 
@@ -151,6 +152,22 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     expect(response.status).toEqual(400);
     expect(response.body.success).toEqual(false);
     expect(response.body.error).toEqual('Support request not found');
+    done();
+  });
+
+  it('A user not should be able to fetch a support request they did not create', async (done) => {
+    const supportRequest = await SupportRequest.findOne({
+      description: 'Test description',
+    });
+
+    const response = await request
+      .get(`${baseUrl}/support_request/${supportRequest._id}`)
+      .set('Content-Type', 'application/json')
+      .set('authorization', `Bearer ${secondToken}`);
+
+    expect(response.status).toEqual(400);
+    expect(response.body.success).toEqual(false);
+    expect(response.body.error).toEqual('Not allowed');
     done();
   });
 
@@ -392,17 +409,13 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     const response = await request
       .patch(`${baseUrl}/support_request/close_request/${supportRequest._id}`)
       .set('Content-Type', 'application/json')
-      .set('authorization', `Bearer ${adminToken}`)
-      .send({
-        status: 'CLOSED',
-      });
+      .set('authorization', `Bearer ${adminToken}`);
 
     expect(response.status).toEqual(200);
     expect(response.body.success).toEqual(true);
     expect(response.body.message).toEqual(
       'You have successfully closed this support request',
     );
-    expect(response.body.data.status).toEqual('CLOSED');
     done();
   });
 
@@ -412,10 +425,7 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
         `${baseUrl}/support_request/close_request/607767fe1341087782da1be1`,
       )
       .set('Content-Type', 'application/json')
-      .set('authorization', `Bearer ${adminToken}`)
-      .send({
-        status: 'CLOSED',
-      });
+      .set('authorization', `Bearer ${adminToken}`);
 
     expect(response.status).toEqual(400);
     expect(response.body.success).toEqual(false);
@@ -431,14 +441,22 @@ describe('TEST SUITE FOR SUPPORT REQUEST', () => {
     const response = await request
       .patch(`${baseUrl}/support_request/close_request/${supportRequest._id}`)
       .set('Content-Type', 'application/json')
-      .set('authorization', `Bearer ${token}`)
-      .send({
-        status: 'CLOSED',
-      });
+      .set('authorization', `Bearer ${token}`);
 
     expect(response.status).toEqual(400);
     expect(response.body.success).toEqual(false);
     expect(response.body.error).toEqual('Unathorized access');
+    done();
+  });
+
+  it('An admin user should be able to update a support request status', async (done) => {
+    const response = await request
+      .get(`${baseUrl}/download_report`)
+      .set('Content-Type', 'application/json')
+      .set('authorization', `Bearer ${adminToken}`);
+
+    expect(response.status).toEqual(200);
+    expect(response).toHaveProperty('text');
     done();
   });
 });
@@ -526,6 +544,17 @@ describe('AUTHENTICATION CONTROLLER UNIT TESTS', () => {
       },
     };
     await UnmockedSupportRequestController.getSupportRequests(req, res);
+    expect(status).toHaveBeenCalledTimes(1);
+    expect(json).toHaveBeenCalledTimes(1);
+    done();
+  });
+
+  it('calls status and json methods to generate response when fetching csv file', async (done) => {
+    jest.spyOn(global, 'Date').mockImplementation(() => {
+      throw new Error('Failed to fetch file');
+    });
+
+    await UnmockedSupportRequestController.downloadReport(req, res);
     expect(status).toHaveBeenCalledTimes(1);
     expect(json).toHaveBeenCalledTimes(1);
     done();
